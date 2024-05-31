@@ -1,0 +1,13 @@
+GET http://localhost:8080/22750120 HTTP/2
+Host: localhost:8080
+Content-Type: application/json
+
+###
+
+GET https://viacep.com.br/ws/20010020/json/ HTTP/2
+Content-Type: application/json
+
+###
+
+GET https://api.weatherapi.com/v1/current.json?key=&q=whwewe HTTP/2
+Content-Type: application/json
