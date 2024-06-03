@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gorilla/mux"
 	"github.com/rodrigoachilles/simple-weather/internal/dto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -31,9 +30,9 @@ func TestLocaleHandler_Handle(t *testing.T) {
 	tests := []struct {
 		name                string
 		cep                 string
-		mockLocaleResponse  dto.LocaleOutput
+		mockLocaleResponse  *dto.LocaleOutput
 		mockLocaleError     error
-		mockWeatherResponse dto.WeatherOutput
+		mockWeatherResponse *dto.WeatherOutput
 		mockWeatherError    error
 		expectedStatusCode  int
 		expectedResponse    interface{}
@@ -60,14 +59,14 @@ func TestLocaleHandler_Handle(t *testing.T) {
 		{
 			name:               "locale not found",
 			cep:                "12345678",
-			mockLocaleResponse: dto.LocaleOutput{Localidade: ""},
+			mockLocaleResponse: &dto.LocaleOutput{Localidade: ""},
 			expectedStatusCode: http.StatusNotFound,
 			expectedResponse:   dto.ErrorOutput{StatusCode: http.StatusNotFound, Message: "can not find zipcode"},
 		},
 		{
 			name:               "weather finder error - unauthorized",
 			cep:                "12345678",
-			mockLocaleResponse: dto.LocaleOutput{Localidade: "Localidade"},
+			mockLocaleResponse: &dto.LocaleOutput{Localidade: "Localidade"},
 			mockWeatherError:   errors.New("API key is invalid or not provided"),
 			expectedStatusCode: http.StatusUnauthorized,
 			expectedResponse:   dto.ErrorOutput{StatusCode: http.StatusUnauthorized, Message: "API key is invalid or not provided"},
@@ -75,7 +74,7 @@ func TestLocaleHandler_Handle(t *testing.T) {
 		{
 			name:               "weather finder error - internal server error",
 			cep:                "12345678",
-			mockLocaleResponse: dto.LocaleOutput{Localidade: "Localidade"},
+			mockLocaleResponse: &dto.LocaleOutput{Localidade: "Localidade"},
 			mockWeatherError:   errors.New("weather finder error"),
 			expectedStatusCode: http.StatusInternalServerError,
 			expectedResponse:   dto.ErrorOutput{StatusCode: http.StatusInternalServerError, Message: "weather finder error"},
@@ -83,8 +82,8 @@ func TestLocaleHandler_Handle(t *testing.T) {
 		{
 			name:                "successful response",
 			cep:                 "12345678",
-			mockLocaleResponse:  dto.LocaleOutput{Localidade: "Localidade"},
-			mockWeatherResponse: dto.WeatherOutput{Current: dto.CurrentWeather{TempC: 25.0, TempF: 77.0}},
+			mockLocaleResponse:  &dto.LocaleOutput{Localidade: "Localidade"},
+			mockWeatherResponse: &dto.WeatherOutput{Current: dto.CurrentWeather{TempC: 25.0, TempF: 77.0}},
 			expectedStatusCode:  http.StatusOK,
 			expectedResponse:    dto.ResultOutput{Locale: "Localidade", TempC: 25.0, TempF: 77.0, TempK: 298.15},
 		},
@@ -96,13 +95,13 @@ func TestLocaleHandler_Handle(t *testing.T) {
 			mockWeatherFinder := new(MockFinder)
 			handler := NewLocaleHandler(mockLocaleFinder, mockWeatherFinder)
 
-			req := httptest.NewRequest("GET", fmt.Sprintf("/%s", tt.cep), nil)
+			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/%s", tt.cep), nil)
 			w := httptest.NewRecorder()
 
-			req = mux.SetURLVars(req, map[string]string{"cep": tt.cep})
+			req.SetPathValue("cep", tt.cep)
 
 			mockLocaleFinder.On("Execute", tt.cep).Return(tt.mockLocaleResponse, tt.mockLocaleError)
-			if tt.mockLocaleResponse.Localidade != "" {
+			if tt.mockLocaleResponse != nil && tt.mockLocaleResponse.Localidade != "" {
 				mockWeatherFinder.On("Execute", tt.mockLocaleResponse.Localidade).Return(tt.mockWeatherResponse, tt.mockWeatherError)
 			}
 
