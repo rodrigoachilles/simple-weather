@@ -27,40 +27,40 @@ func (h *LocaleHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	cep := r.PathValue("cep")
 	if len(cep) != 8 {
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		_ = json.NewEncoder(w).Encode(&dto.OutputError{
+		_ = json.NewEncoder(w).Encode(&dto.ErrorOutput{
 			StatusCode: http.StatusUnprocessableEntity,
 			Message:    "invalid zipcode",
 		})
 		return
 	}
 
-	outputLocaleRaw, err := h.localeFinder.Execute(cep)
+	localeOutputRaw, err := h.localeFinder.Execute(cep)
 	if err != nil {
 		log.Logger.Error().Err(err).Msg(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(w).Encode(&dto.OutputError{
+		_ = json.NewEncoder(w).Encode(&dto.ErrorOutput{
 			StatusCode: http.StatusInternalServerError,
 			Message:    err.Error(),
 		})
 		return
 	}
 
-	outputLocale := outputLocaleRaw.(*dto.LocaleOutput)
-	if outputLocale.Localidade == "" {
+	localeOutput := localeOutputRaw.(*dto.LocaleOutput)
+	if localeOutput.Localidade == "" {
 		w.WriteHeader(http.StatusNotFound)
-		_ = json.NewEncoder(w).Encode(&dto.OutputError{
+		_ = json.NewEncoder(w).Encode(&dto.ErrorOutput{
 			StatusCode: http.StatusNotFound,
 			Message:    "can not find zipcode",
 		})
 		return
 	}
 
-	outputWeatherRaw, err := h.weatherFinder.Execute(outputLocale.Localidade)
+	weatherOutputRaw, err := h.weatherFinder.Execute(localeOutput.Localidade)
 	if err != nil {
 		log.Logger.Error().Err(err).Msg(err.Error())
 		if err.Error() == "API key is invalid or not provided" {
 			w.WriteHeader(http.StatusUnauthorized)
-			_ = json.NewEncoder(w).Encode(&dto.OutputError{
+			_ = json.NewEncoder(w).Encode(&dto.ErrorOutput{
 				StatusCode: http.StatusUnauthorized,
 				Message:    err.Error(),
 			})
@@ -68,21 +68,21 @@ func (h *LocaleHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(w).Encode(&dto.OutputError{
+		_ = json.NewEncoder(w).Encode(&dto.ErrorOutput{
 			StatusCode: http.StatusInternalServerError,
 			Message:    err.Error(),
 		})
 		return
 	}
 
-	outputWeather := outputWeatherRaw.(*dto.WeatherOutput)
+	weatherOutput := weatherOutputRaw.(*dto.WeatherOutput)
 
 	w.WriteHeader(http.StatusOK)
-	result := dto.OutputResult{
-		Locale: outputLocale.Localidade,
-		TempC:  outputWeather.Current.TempC,
-		TempF:  outputWeather.Current.TempF,
-		TempK:  outputWeather.Current.TempC + 273.15,
+	result := dto.ResultOutput{
+		Locale: localeOutput.Localidade,
+		TempC:  weatherOutput.Current.TempC,
+		TempF:  weatherOutput.Current.TempF,
+		TempK:  weatherOutput.Current.TempC + 273.15,
 	}
 	log.Logger.Info().Msg(fmt.Sprintf("%s", result))
 

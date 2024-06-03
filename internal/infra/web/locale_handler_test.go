@@ -42,27 +42,27 @@ func TestLocaleHandler_Handle(t *testing.T) {
 			name:               "invalid cep length - number < 8",
 			cep:                "123",
 			expectedStatusCode: http.StatusUnprocessableEntity,
-			expectedResponse:   dto.OutputError{StatusCode: http.StatusUnprocessableEntity, Message: "invalid zipcode"},
+			expectedResponse:   dto.ErrorOutput{StatusCode: http.StatusUnprocessableEntity, Message: "invalid zipcode"},
 		},
 		{
 			name:               "invalid cep length - number > 8",
 			cep:                "123456789",
 			expectedStatusCode: http.StatusUnprocessableEntity,
-			expectedResponse:   dto.OutputError{StatusCode: http.StatusUnprocessableEntity, Message: "invalid zipcode"},
+			expectedResponse:   dto.ErrorOutput{StatusCode: http.StatusUnprocessableEntity, Message: "invalid zipcode"},
 		},
 		{
 			name:               "locale finder error",
 			cep:                "12345678",
 			mockLocaleError:    errors.New("locale finder error"),
 			expectedStatusCode: http.StatusInternalServerError,
-			expectedResponse:   dto.OutputError{StatusCode: http.StatusInternalServerError, Message: "locale finder error"},
+			expectedResponse:   dto.ErrorOutput{StatusCode: http.StatusInternalServerError, Message: "locale finder error"},
 		},
 		{
 			name:               "locale not found",
 			cep:                "12345678",
 			mockLocaleResponse: dto.LocaleOutput{Localidade: ""},
 			expectedStatusCode: http.StatusNotFound,
-			expectedResponse:   dto.OutputError{StatusCode: http.StatusNotFound, Message: "can not find zipcode"},
+			expectedResponse:   dto.ErrorOutput{StatusCode: http.StatusNotFound, Message: "can not find zipcode"},
 		},
 		{
 			name:               "weather finder error - unauthorized",
@@ -70,7 +70,7 @@ func TestLocaleHandler_Handle(t *testing.T) {
 			mockLocaleResponse: dto.LocaleOutput{Localidade: "Localidade"},
 			mockWeatherError:   errors.New("API key is invalid or not provided"),
 			expectedStatusCode: http.StatusUnauthorized,
-			expectedResponse:   dto.OutputError{StatusCode: http.StatusUnauthorized, Message: "API key is invalid or not provided"},
+			expectedResponse:   dto.ErrorOutput{StatusCode: http.StatusUnauthorized, Message: "API key is invalid or not provided"},
 		},
 		{
 			name:               "weather finder error - internal server error",
@@ -78,7 +78,7 @@ func TestLocaleHandler_Handle(t *testing.T) {
 			mockLocaleResponse: dto.LocaleOutput{Localidade: "Localidade"},
 			mockWeatherError:   errors.New("weather finder error"),
 			expectedStatusCode: http.StatusInternalServerError,
-			expectedResponse:   dto.OutputError{StatusCode: http.StatusInternalServerError, Message: "weather finder error"},
+			expectedResponse:   dto.ErrorOutput{StatusCode: http.StatusInternalServerError, Message: "weather finder error"},
 		},
 		{
 			name:                "successful response",
@@ -86,7 +86,7 @@ func TestLocaleHandler_Handle(t *testing.T) {
 			mockLocaleResponse:  dto.LocaleOutput{Localidade: "Localidade"},
 			mockWeatherResponse: dto.WeatherOutput{Current: dto.CurrentWeather{TempC: 25.0, TempF: 77.0}},
 			expectedStatusCode:  http.StatusOK,
-			expectedResponse:    dto.OutputResult{Locale: "Localidade", TempC: 25.0, TempF: 77.0, TempK: 298.15},
+			expectedResponse:    dto.ResultOutput{Locale: "Localidade", TempC: 25.0, TempF: 77.0, TempK: 298.15},
 		},
 	}
 
@@ -96,7 +96,7 @@ func TestLocaleHandler_Handle(t *testing.T) {
 			mockWeatherFinder := new(MockFinder)
 			handler := NewLocaleHandler(mockLocaleFinder, mockWeatherFinder)
 
-			req := httptest.NewRequest("GET", fmt.Sprintf("/locale/%s", tt.cep), nil)
+			req := httptest.NewRequest("GET", fmt.Sprintf("/%s", tt.cep), nil)
 			w := httptest.NewRecorder()
 
 			req = mux.SetURLVars(req, map[string]string{"cep": tt.cep})
@@ -117,15 +117,15 @@ func TestLocaleHandler_Handle(t *testing.T) {
 
 			var actualResponse interface{}
 			if res.StatusCode == http.StatusOK {
-				var result dto.OutputResult
-				err := json.NewDecoder(res.Body).Decode(&result)
+				var resultOutput dto.ResultOutput
+				err := json.NewDecoder(res.Body).Decode(&resultOutput)
 				require.NoError(t, err)
-				actualResponse = result
+				actualResponse = resultOutput
 			} else {
-				var outputError dto.OutputError
-				err := json.NewDecoder(res.Body).Decode(&outputError)
+				var errorOutput dto.ErrorOutput
+				err := json.NewDecoder(res.Body).Decode(&errorOutput)
 				require.NoError(t, err)
-				actualResponse = outputError
+				actualResponse = errorOutput
 			}
 
 			assert.Equal(t, tt.expectedResponse, actualResponse)
