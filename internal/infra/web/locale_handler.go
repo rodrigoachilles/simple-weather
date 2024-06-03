@@ -45,7 +45,7 @@ func (h *LocaleHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	outputLocale := outputLocaleRaw.(*dto.OutputLocale)
+	outputLocale := outputLocaleRaw.(*dto.LocaleOutput)
 	if outputLocale.Localidade == "" {
 		w.WriteHeader(http.StatusNotFound)
 		_ = json.NewEncoder(w).Encode(&dto.OutputError{
@@ -75,7 +75,7 @@ func (h *LocaleHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	outputWeather := outputWeatherRaw.(*dto.OutputWeather)
+	outputWeather := outputWeatherRaw.(*dto.WeatherOutput)
 
 	w.WriteHeader(http.StatusOK)
 	result := dto.OutputResult{

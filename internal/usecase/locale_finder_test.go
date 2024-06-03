@@ -23,7 +23,7 @@ func TestLocaleFinder_Execute_Success(t *testing.T) {
 	mockClient := &http.Client{Transport: mockRoundTripper}
 
 	expectedBody := []byte(mockLocaleResponseBody)
-	expectedOutput := &dto.OutputLocale{Localidade: "São Paulo"}
+	expectedOutput := &dto.LocaleOutput{Localidade: "São Paulo"}
 
 	mockRoundTripper.On("RoundTrip", mock.Anything).Return(&http.Response{
 		StatusCode: http.StatusOK,
@@ -54,7 +54,7 @@ func TestLocaleFinder_Execute_InvalidResponse(t *testing.T) {
 	mockRoundTripper := new(MockRoundTripper)
 	mockClient := &http.Client{Transport: mockRoundTripper}
 
-	expectedOutput := &dto.OutputLocale{}
+	expectedOutput := &dto.LocaleOutput{}
 
 	mockRoundTripper.On("RoundTrip", mock.Anything).Return(&http.Response{
 		StatusCode: http.StatusOK,

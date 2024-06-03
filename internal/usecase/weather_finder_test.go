@@ -87,7 +87,7 @@ func TestWeatherFinder_Execute_InvalidResponse(t *testing.T) {
 	mockRoundTripper := new(MockRoundTripper)
 	mockClient := &http.Client{Transport: mockRoundTripper}
 
-	expectedOutput := &dto.OutputWeather{}
+	expectedOutput := &dto.WeatherOutput{}
 
 	mockRoundTripper.On("RoundTrip", mock.Anything).Return(&http.Response{
 		StatusCode: http.StatusBadRequest,

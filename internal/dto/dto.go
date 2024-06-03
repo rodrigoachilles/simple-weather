@@ -2,11 +2,11 @@ package dto
 
 import "fmt"
 
-type OutputLocale struct {
+type LocaleOutput struct {
 	Localidade string `json:"localidade"`
 }
 
-type OutputWeather struct {
+type WeatherOutput struct {
 	Current CurrentWeather `json:"current"`
 }
 

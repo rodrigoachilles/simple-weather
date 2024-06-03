@@ -31,9 +31,9 @@ func TestLocaleHandler_Handle(t *testing.T) {
 	tests := []struct {
 		name                string
 		cep                 string
-		mockLocaleResponse  dto.OutputLocale
+		mockLocaleResponse  dto.LocaleOutput
 		mockLocaleError     error
-		mockWeatherResponse dto.OutputWeather
+		mockWeatherResponse dto.WeatherOutput
 		mockWeatherError    error
 		expectedStatusCode  int
 		expectedResponse    interface{}
@@ -60,14 +60,14 @@ func TestLocaleHandler_Handle(t *testing.T) {
 		{
 			name:               "locale not found",
 			cep:                "12345678",
-			mockLocaleResponse: dto.OutputLocale{Localidade: ""},
+			mockLocaleResponse: dto.LocaleOutput{Localidade: ""},
 			expectedStatusCode: http.StatusNotFound,
 			expectedResponse:   dto.OutputError{StatusCode: http.StatusNotFound, Message: "can not find zipcode"},
 		},
 		{
 			name:               "weather finder error - unauthorized",
 			cep:                "12345678",
-			mockLocaleResponse: dto.OutputLocale{Localidade: "Localidade"},
+			mockLocaleResponse: dto.LocaleOutput{Localidade: "Localidade"},
 			mockWeatherError:   errors.New("API key is invalid or not provided"),
 			expectedStatusCode: http.StatusUnauthorized,
 			expectedResponse:   dto.OutputError{StatusCode: http.StatusUnauthorized, Message: "API key is invalid or not provided"},
@@ -75,7 +75,7 @@ func TestLocaleHandler_Handle(t *testing.T) {
 		{
 			name:               "weather finder error - internal server error",
 			cep:                "12345678",
-			mockLocaleResponse: dto.OutputLocale{Localidade: "Localidade"},
+			mockLocaleResponse: dto.LocaleOutput{Localidade: "Localidade"},
 			mockWeatherError:   errors.New("weather finder error"),
 			expectedStatusCode: http.StatusInternalServerError,
 			expectedResponse:   dto.OutputError{StatusCode: http.StatusInternalServerError, Message: "weather finder error"},
@@ -83,8 +83,8 @@ func TestLocaleHandler_Handle(t *testing.T) {
 		{
 			name:                "successful response",
 			cep:                 "12345678",
-			mockLocaleResponse:  dto.OutputLocale{Localidade: "Localidade"},
-			mockWeatherResponse: dto.OutputWeather{Current: dto.CurrentWeather{TempC: 25.0, TempF: 77.0}},
+			mockLocaleResponse:  dto.LocaleOutput{Localidade: "Localidade"},
+			mockWeatherResponse: dto.WeatherOutput{Current: dto.CurrentWeather{TempC: 25.0, TempF: 77.0}},
 			expectedStatusCode:  http.StatusOK,
 			expectedResponse:    dto.OutputResult{Locale: "Localidade", TempC: 25.0, TempF: 77.0, TempK: 298.15},
 		},

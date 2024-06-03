@@ -53,7 +53,7 @@ func (w *WeatherFinder) Execute(query string) (interface{}, error) {
 
 	log.Logger.Debug().Msg(fmt.Sprintf("Response body: %s", string(body)))
 
-	var output dto.OutputWeather
+	var output dto.WeatherOutput
 	err = json.Unmarshal(body, &output)
 	if err != nil {
 		return nil, err

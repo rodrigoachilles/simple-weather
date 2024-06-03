@@ -40,7 +40,7 @@ func (l *LocaleFinder) Execute(query string) (interface{}, error) {
 
 	log.Logger.Debug().Msg(fmt.Sprintf("Response body: %s", string(body)))
 
-	var output dto.OutputLocale
+	var output dto.LocaleOutput
 	err = json.Unmarshal(body, &output)
 	if err != nil {
 		return nil, err
