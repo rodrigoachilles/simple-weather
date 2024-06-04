@@ -58,7 +58,7 @@ func TestLocaleFinder_Execute_InvalidResponse(t *testing.T) {
 
 	mockRoundTripper.On("RoundTrip", mock.Anything).Return(&http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"erro" : true }`))),
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"erro" : true}`))),
 	}, nil)
 
 	finder := NewLocaleFinder(mockClient)
