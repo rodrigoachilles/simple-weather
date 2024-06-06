@@ -61,6 +61,28 @@ func TestWeatherFinder_Execute_HttpClientError(t *testing.T) {
 	assert.Contains(t, err.Error(), "mocked http client error")
 }
 
+func TestWeatherFinder_Execute_ApiKeyNotProvided(t *testing.T) {
+	mockRoundTripper := new(MockRoundTripper)
+	mockClient := &http.Client{Transport: mockRoundTripper}
+
+	mockRoundTripper.On("RoundTrip", mock.Anything).Return(&http.Response{
+		StatusCode: http.StatusUnauthorized,
+		Body:       io.NopCloser(bytes.NewReader([]byte(""))),
+	}, nil)
+
+	origAPIKey := os.Getenv(keyWeatherApi)
+	_ = os.Setenv(keyWeatherApi, "")
+	defer func(key, value string) {
+		_ = os.Setenv(key, value)
+	}(keyWeatherApi, origAPIKey)
+
+	finder := NewWeatherFinder(mockClient)
+	_, err := finder.Execute(mockLocale)
+
+	assert.NotNil(t, err)
+	assert.Equal(t, "API key is not provided", err.Error())
+}
+
 func TestWeatherFinder_Execute_InvalidApiKey(t *testing.T) {
 	mockRoundTripper := new(MockRoundTripper)
 	mockClient := &http.Client{Transport: mockRoundTripper}
@@ -80,7 +102,7 @@ func TestWeatherFinder_Execute_InvalidApiKey(t *testing.T) {
 	_, err := finder.Execute(mockLocale)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, "API key is invalid or not provided", err.Error())
+	assert.Equal(t, "API key is invalid", err.Error())
 }
 
 func TestWeatherFinder_Execute_InvalidResponse(t *testing.T) {

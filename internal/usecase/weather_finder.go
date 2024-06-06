@@ -27,6 +27,9 @@ func NewWeatherFinder(httpClient *http.Client) *WeatherFinder {
 
 func (w *WeatherFinder) Execute(query string) (interface{}, error) {
 	key := os.Getenv(keyWeatherApi)
+	if key == "" {
+		return nil, errors.New("API key is not provided")
+	}
 	requestURL := fmt.Sprintf(urlWeatherApi, key, query)
 	requestURL = strings.Replace(requestURL, " ", "%20", -1)
 
@@ -43,7 +46,7 @@ func (w *WeatherFinder) Execute(query string) (interface{}, error) {
 		return nil, err
 	}
 	if res.StatusCode != http.StatusOK && res.StatusCode != http.StatusBadRequest {
-		return nil, errors.New("API key is invalid or not provided")
+		return nil, errors.New("API key is invalid")
 	}
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
