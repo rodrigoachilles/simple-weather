@@ -3,7 +3,6 @@ package usecase
 import (
 	"bytes"
 	"errors"
-	"github.com/rodrigoachilles/simple-weather/internal/dto"
 	"io"
 	"net/http"
 	"os"
@@ -105,11 +104,9 @@ func TestWeatherFinder_Execute_InvalidApiKey(t *testing.T) {
 	assert.Equal(t, "API key is invalid", err.Error())
 }
 
-func TestWeatherFinder_Execute_InvalidResponse(t *testing.T) {
+func TestWeatherFinder_Execute_NotFound(t *testing.T) {
 	mockRoundTripper := new(MockRoundTripper)
 	mockClient := &http.Client{Transport: mockRoundTripper}
-
-	expectedOutput := &dto.WeatherOutput{}
 
 	mockRoundTripper.On("RoundTrip", mock.Anything).Return(&http.Response{
 		StatusCode: http.StatusBadRequest,
@@ -123,8 +120,8 @@ func TestWeatherFinder_Execute_InvalidResponse(t *testing.T) {
 	}(keyWeatherApi, origAPIKey)
 
 	finder := NewWeatherFinder(mockClient)
-	output, err := finder.Execute(mockInvalidLocale)
+	_, err := finder.Execute(mockInvalidLocale)
 
-	assert.Nil(t, err)
-	assert.Equal(t, expectedOutput, output)
+	assert.NotNil(t, err)
+	assert.Equal(t, "can not find zipcode", err.Error())
 }

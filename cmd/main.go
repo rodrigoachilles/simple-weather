@@ -10,7 +10,7 @@ import (
 
 func main() {
 	port := ":8080"
-	log.Logger.Info().Msg(fmt.Sprintf("Starting server on port %s ...", port[1:]))
+	log.Logger.Info().Msg(fmt.Sprintf("Starting server on port '%s'...", port[1:]))
 
 	mux := http.NewServeMux()
 	localeFinder := usecase.NewLocaleFinder(http.DefaultClient)
