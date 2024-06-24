@@ -23,7 +23,7 @@ type ResultOutput struct {
 }
 
 func (o ResultOutput) String() string {
-	return fmt.Sprintf("{ TempC: %f, TempF: %f, TempK: %f }", o.TempC, o.TempF, o.TempK)
+	return fmt.Sprintf("{ Locale: %s, TempC: %f, TempF: %f, TempK: %f }", o.Locale, o.TempC, o.TempF, o.TempK)
 }
 
 type ErrorOutput struct {
