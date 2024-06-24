@@ -18,6 +18,7 @@ Bienvenue dans le système météo par code postal développé en Go ! Ce projet
 - [⚙️ Installation](#installation)
 - [🚀 Utilisation](#utilisation)
 - [🔍 Exemples](#exemples)
+- [📤 Déploiement sur Google Cloud Run](#déploiement-sur-google-cloud-run)
 - [🤝 Contribution](#contribution)
 - [📜 Licence](#licence)
 
@@ -139,16 +140,6 @@ curl -X GET "http://localhost:8080/00000000"
 }
 ```
 
-## 🤝&nbsp;Contribution
-
-N'hésitez pas à ouvrir des issues ou à soumettre des pull requests pour des améliorations et des corrections de bugs.
-
-## 📜&nbsp;Licence
-
-Ce projet est sous licence MIT.
-
----
-
 ## 📤&nbsp;Déploiement sur Google Cloud Run
 
 Pour déployer sur Google Cloud Run, suivez les étapes ci-dessous :
@@ -178,3 +169,13 @@ Pour déployer sur Google Cloud Run, suivez les étapes ci-dessous :
     ```
 
 5. Accédez à l'URL fournie après le déploiement pour utiliser le système météo par code postal.
+
+[Simple weather](https://simple-weather-ciw7dykisq-uc.a.run.app/01001000)
+
+## 🤝&nbsp;Contribution
+
+N'hésitez pas à ouvrir des issues ou à soumettre des pull requests pour des améliorations et des corrections de bugs.
+
+## 📜&nbsp;Licence
+
+Ce projet est sous licence MIT.

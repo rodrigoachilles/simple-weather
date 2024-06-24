@@ -168,7 +168,9 @@ Para realizar o deploy no Google Cloud Run, siga os passos abaixo:
     gcloud run deploy simple-weather --image gcr.io/[PROJECT_ID]/simple-weather --platform managed
     ```
 
-5. Acesse o URL fornecido após a implantação para usar o sistema de clima por CEP.
+5. Acesse a URL fornecida após a implantação para usar o sistema de clima por CEP.
+
+[Simple weather](https://simple-weather-ciw7dykisq-uc.a.run.app/01001000)
 
 ## 🤝&nbsp;Contribuição
 

@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-const urlViacepApi = "https://viacep.com.br/ws/%s/json/"
+const urlViacepApi = "http://viacep.com.br/ws/%s/json/"
 
 type LocaleFinder struct {
 	httpClient *http.Client

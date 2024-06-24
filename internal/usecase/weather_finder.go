@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	urlWeatherApi = "https://api.weatherapi.com/v1/current.json?key=%s&q=%s"
+	urlWeatherApi = "http://api.weatherapi.com/v1/current.json?key=%s&q=%s"
 	keyWeatherApi = "KEY_WEATHER_API"
 )
 

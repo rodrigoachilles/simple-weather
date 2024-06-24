@@ -170,6 +170,8 @@ To deploy on Google Cloud Run, follow the steps below:
 
 5. Access the provided URL after deployment to use the weather system by ZIP code.
 
+[Simple weather](https://simple-weather-ciw7dykisq-uc.a.run.app/01001000)
+
 ## 🤝&nbsp;Contribution
 
 Feel free to open issues or submit pull requests for improvements and bug fixes.
